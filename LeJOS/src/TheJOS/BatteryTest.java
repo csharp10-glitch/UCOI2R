@@ -16,7 +16,8 @@ public class BatteryTest {
 		double trackwidth = 7;
 		DifferentialPilot rov3r = new DifferentialPilot(diam, trackwidth, Motor.C, Motor.B);
 
-		rov3r.travel(25);
+		rov3r.travel(25.4);
+		System.out.println(Battery.getMotorCurrent());
 		Sound.beep();
 		System.out.println(Battery.getVoltageMilliVolt());
 		System.out.println(Battery.getBatteryCurrent());
