@@ -1,10 +1,8 @@
 package TheJOS;
 
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
-import lejos.hardware.motor.Motor;
 import lejos.hardware.port.MotorPort;
 import lejos.robotics.RegulatedMotor;
-import lejos.robotics.navigation.DifferentialPilot;
 import lejos.utility.Delay;
 
 public class CarterAndBriggs {
@@ -50,6 +48,20 @@ public class CarterAndBriggs {
 		rm.forward();
 		lm.forward();
 		Delay.msDelay(dt);
+		
+		rm.flt();
+		lm.flt();
+		rm.close();
+		lm.close();
+		
+		rm.forward();
+		lm.forward();
+		Delay.msDelay(dt);
+		
+		rm.flt();
+		lm.flt();
+		rm.close();
+		lm.close();
 		
 		
 		
