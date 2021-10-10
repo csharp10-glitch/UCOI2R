@@ -14,46 +14,44 @@ import lejos.utility.Delay;
 public class LookBattery {
 	public static void main(String[] args) {
 		Sound.beep();
-//		System.out.println(Battery.getVoltageMilliVolt());
-//		System.out.println(Battery.getBatteryCurrent());
 
 		RegulatedMotor turnTable = new EV3MediumRegulatedMotor(MotorPort.D);
-		
-//		EV3GyroSensor gyroSensor = new EV3GyroSensor(SensorPort.S4);
+
 		EV3GyroSensor guyRho = new EV3GyroSensor(SensorPort.S4);
-//		SensorMode mode = guyRho.getMode("RateAndAngle");
-//		int rate = 0;
-//		int angle = 0;
-//		float [] sample = new float[mode.sampleSize()];
-//		mode.fetchSample(sample, 0);
-//		rate = (int)sample[0];
-//		angle = (int)sample[1];
-		
-		SampleProvider sp = guyRho.getAngleMode();
-		int value = 0;
 
-        //Control loop
-        final int iteration_threshold = 20;
-        for(int i = 0; i <= iteration_threshold; i++) {
+		SampleProvider sp = guyRho.getAngleAndRateMode();
+		float[] sample = new float[sp.sampleSize()];
+		sp.fetchSample(sample, 0);
 
-        	float [] sample = new float[sp.sampleSize()];
-            sp.fetchSample(sample, 0);
-            value = (int)sample[0];
-
-			System.out.println("Iteration: " + i);
-			System.out.println("Gyro angle: " + value);
-
-            Delay.msDelay(500);
-        }
+		guyRho.reset();
+		int v1 = 0;
+		int v2 = 0;
 		
 //		System.out.println(rate);
 		turnTable.rotateTo(0);
+		sample = new float[sp.sampleSize()];
+        sp.fetchSample(sample, 0);
+        v1 = (int)sample[0];
+        v2 = (int)sample[1];
+		System.out.println("Gyro angle: " + v1 + " Gyro rate: " + v2 );
 		turnTable.rotateTo(180);
-//		System.out.println(angle);
+		sample = new float[sp.sampleSize()];
+        sp.fetchSample(sample, 0);
+        v1 = (int)sample[0];
+        v2 = (int)sample[1];
+		System.out.println("Gyro angle: " + v1 + " Gyro rate: " + v2 );
 		turnTable.rotateTo(-180);
-//		System.out.println(angle);
+		sample = new float[sp.sampleSize()];
+        sp.fetchSample(sample, 0);
+        v1 = (int)sample[0];
+        v2 = (int)sample[1];
+		System.out.println("Gyro angle: " + v1 + " Gyro rate: " + v2 );
 		turnTable.rotateTo(0);
-//		System.out.println(angle + " " + rate);
+		sample = new float[sp.sampleSize()];
+        sp.fetchSample(sample, 0);
+        v1 = (int)sample[0];
+        v2 = (int)sample[1];
+		System.out.println("Gyro angle: " + v1 + " Gyro rate: " + v2 );
 		
 		Sound.beep();
 //		System.out.println(Battery.getVoltageMilliVolt());

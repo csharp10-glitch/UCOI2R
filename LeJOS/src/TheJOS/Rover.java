@@ -13,7 +13,7 @@ import lejos.utility.Delay;
 public class Rover {
 	@SuppressWarnings("deprecation")
 	public static void main(String[] args) {
-		double diam = DifferentialPilot.WHEEL_SIZE_EV3;
+		double diam = DifferentialPilot.WHEEL_SIZE_NXT1;
 		double trackwidth = 15.2;
 		DifferentialPilot rov3r = new DifferentialPilot(diam, trackwidth, Motor.C, Motor.B);
 
