@@ -7,18 +7,24 @@ import lejos.utility.Delay;
 
 public class G10Pilot {
 	
+//	Setting variables to our robots defaults
 	double wheelDiameter = 5.6;
 	double trackWidth = 20.32*0.8;
+//	Experimentally determined modifier for trackwidth to get best turn results
 	double twMod = 0.8;
 	double twRaw = 20.32;
 	RegulatedMotor leftMotor;
 	RegulatedMotor rightMotor;
 	int turnRadius = 0;
+//	Wheel rotational speed
 	float leftOmega = 0;
 	float rightOmega = 0;
+//	Motor tach counts
 	float leftTach = 0;
 	float rightTach = 0;
-	int v = 360;
+//	Degrees per second expected for motor
+	int velocity = 360;
+//	distance one wheel rotation will cover
 	double cd = wheelDiameter*3.14159;
 	
 	
@@ -43,20 +49,30 @@ public class G10Pilot {
 	public void forward(){
 		leftMotor.setSpeed(360);
 		rightMotor.setSpeed(360); //d = 1 circumference / second
+		
+//		Ensure motors move at the same time
 		leftMotor.startSynchronization();
 		leftMotor.forward();
 		rightMotor.forward();
 		leftMotor.endSynchronization();
+		
+//		record tach count changes
 		float lmtc = leftMotor.getTachoCount();
 		float rmtc = rightMotor.getTachoCount();
 		float[] tc = {lmtc, rmtc};
 	}
 	
 	public float[] forward(int dps){
-		leftMotor.startSynchronization();
 		leftMotor.setSpeed(dps);
 		rightMotor.setSpeed(dps);
+		
+//		Ensure motors move at the same time
+		leftMotor.startSynchronization();
+		leftMotor.forward();
+		rightMotor.forward();
 		leftMotor.endSynchronization();
+		
+//		record tach count changes
 		float lmtc = leftMotor.getTachoCount();
 		float rmtc = rightMotor.getTachoCount();
 		float[] tc = {lmtc, rmtc};
@@ -64,33 +80,47 @@ public class G10Pilot {
 	}
 	
 	public void turn(int degrees){
-		int wTheta = (int) (trackWidth*degrees);
-		int v = 360;
-		int t = (int) (degrees*trackWidth*wheelDiameter/(360));
-		leftMotor.setSpeed(v);
-		rightMotor.setSpeed(v);
+//		radians to turn
+		double wTheta = (trackWidth*degrees*0.5);
+//		radial velocity of wheel
+		int omega = 360;
+//		amount of seconds to rotate wheels
+		int t = (int) (degrees*trackWidth/(360*wheelDiameter));
+		leftMotor.setSpeed(omega);
+		rightMotor.setSpeed(omega);
+		
+//		Ensure motors move at the same time
 		leftMotor.startSynchronization();
 		leftMotor.forward();
 		rightMotor.backward();
 		leftMotor.endSynchronization();
+		
+//		run for:
 		Delay.msDelay(1000*t);
+
+//		Ensure motors move at the same time
 		leftMotor.startSynchronization();
 		leftMotor.stop();
 		rightMotor.stop();
 		leftMotor.endSynchronization();
-		float lmtc = leftMotor.getTachoCount();
-		float rmtc = rightMotor.getTachoCount();
-		float[] tc = {lmtc, rmtc};
 	}
 	
 	public void turn(float radius, int degrees){
-		double circum = 2*3.14159*radius;
+//		store current speed
 		int v0 = leftMotor.getSpeed();
+//		set speed to 360dps for easier math
 		int v = 360;
+		
+//		calculate inner turn radius
 		double r1 = radius-trackWidth/2.0;
+//		calculate inner circumference
 		double cr1 = r1*2*3.14159;
+//		calculate outer turn radius
 		double r2 = radius+trackWidth/2.0;
+//		calculate outer circumference
 		double cr2 = r2*2*3.14159;
+		
+//		numer of wheel turns needed
 		double dr1 = cr1/cd;
 		double dr2 = cr2/cd;
 		int deg1 = (int) (dr1/360);
@@ -98,6 +128,8 @@ public class G10Pilot {
 		double rp = (2*radius/trackWidth) + 1;
 		double rm = (2*radius/trackWidth) - 1;
 		int dt = degrees/360;
+		
+//		handle left vs right turns
 		if (deg1 > deg2) {
 			leftMotor.setSpeed(v);
 			int vr = (int) (v*rp/rm);
@@ -110,28 +142,24 @@ public class G10Pilot {
 			leftMotor.setSpeed(vl);
 			dt = (int) (dt*deg2);
 		}
+		
+//		Ensure motors move at the same time
 		leftMotor.startSynchronization();
 		leftMotor.forward();
 		rightMotor.forward();
 		leftMotor.endSynchronization();
-		if (dt > 15) {
-			dt = 5;
-		}
+
+//		run for:
 		Delay.msDelay(dt*1000);
+		
+//		Ensure motors move at the same time
 		leftMotor.startSynchronization();
 		leftMotor.stop();
 		rightMotor.stop();
 		leftMotor.endSynchronization();
-		float lmtc = leftMotor.getTachoCount();
-		float rmtc = rightMotor.getTachoCount();
-		float[] tc = {lmtc, rmtc};
+		
+//		reurn to default speed
 		leftMotor.setSpeed(v0);
 		rightMotor.setSpeed(v0);
 	}
-	
-	public double deg2r(int degrees) {
-		double rad = 3.14159/180;
-		return rad;
-	}
-
 }
