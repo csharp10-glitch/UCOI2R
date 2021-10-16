@@ -1,4 +1,4 @@
-package TheJOS;
+package mazeRunner;
 
 public class MazeRunner {
 	public static void main(String[] args) {

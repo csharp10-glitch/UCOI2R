@@ -1,4 +1,4 @@
-package TheJOS;
+package mazeRunner;
 
 import lejos.hardware.port.SensorPort;
 import lejos.hardware.sensor.EV3ColorSensor;

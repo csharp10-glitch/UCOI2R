@@ -1,4 +1,4 @@
-package TheJOS;
+package mazeRunner;
 
 public class INS {
 	
