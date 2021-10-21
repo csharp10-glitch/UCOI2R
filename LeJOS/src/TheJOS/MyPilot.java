@@ -17,7 +17,6 @@ public class MyPilot extends MovePilot{
 		super(initChassis(wheelOffset));
 		setLinearSpeed(linearSpeed);
 		setAngularSpeed(angularSpeed);
-		colorSensor.getColorIDMode();
 	}
 
 	static Chassis initChassis(double wheelOffset) {
@@ -27,12 +26,34 @@ public class MyPilot extends MovePilot{
 		Wheel leftWheel = WheeledChassis.modelWheel(leftMotor, wheelDiam).offset(-1*wheelOffset);
 		Wheel rightWheel = WheeledChassis.modelWheel(rightMotor, wheelDiam).offset(wheelOffset);
 		return new WheeledChassis(new Wheel[] { leftWheel, rightWheel }, WheeledChassis.TYPE_DIFFERENTIAL);
+	}	
+	
+	/**
+	 * Rotate left slowly and check for line.
+	 * @return true if line detected
+	 */
+	public boolean checkLineLeft(double maxAngle, double increment, int lineColor) {
+		for (double angleTurned = 0; angleTurned > -maxAngle; angleTurned -= increment) {
+			rotate(angleTurned);
+			if(detectColor(lineColor)) {
+				return true;
+			}
+		}
+		return false;
 	}
-		
-	public void turn(double speed, double angle, double radius) {
-		setMinRadius(radius);
-		setAngularSpeed(speed);
-		rotate(angle);
+
+	/**
+	 * Rotate right slowly and check for line.
+	 * @return true if line detected
+	 */
+	public boolean checkLineRight(double maxAngle, double increment, int lineColor) {
+		for (double angleTurned = 0; angleTurned < maxAngle; angleTurned += increment) {
+			rotate(angleTurned);
+			if(detectColor(lineColor)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public boolean detectColor(int color) {
