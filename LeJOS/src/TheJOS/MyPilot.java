@@ -2,6 +2,8 @@ package TheJOS;
 
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.port.MotorPort;
+import lejos.hardware.port.SensorPort;
+import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.robotics.chassis.Chassis;
 import lejos.robotics.chassis.Wheel;
 import lejos.robotics.chassis.WheeledChassis;
@@ -9,9 +11,13 @@ import lejos.robotics.navigation.MoveController;
 import lejos.robotics.navigation.MovePilot;
 
 public class MyPilot extends MovePilot{
+	EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S1);
 
-	public MyPilot(double wheelOffset) {
+	public MyPilot(double wheelOffset, double linearSpeed, double angularSpeed) {
 		super(initChassis(wheelOffset));
+		setLinearSpeed(linearSpeed);
+		setAngularSpeed(angularSpeed);
+		colorSensor.getColorIDMode();
 	}
 
 	static Chassis initChassis(double wheelOffset) {
@@ -22,30 +28,14 @@ public class MyPilot extends MovePilot{
 		Wheel rightWheel = WheeledChassis.modelWheel(rightMotor, wheelDiam).offset(wheelOffset);
 		return new WheeledChassis(new Wheel[] { leftWheel, rightWheel }, WheeledChassis.TYPE_DIFFERENTIAL);
 	}
-	
-	/**
-	 * 
-	 * @param speed
-	 * @param angle
-	 */
-	public void moveLinear(double speed, double distance) {
-		setLinearSpeed(speed);
-		travel(distance);
-	}
-	
-	/**
-	 * 
-	 * @param speed
-	 * @param angle
-	 */
-	public void turn(double speed, double angle) {
-		setAngularSpeed(speed);
-		rotate(angle);
-	}
-	
+		
 	public void turn(double speed, double angle, double radius) {
 		setMinRadius(radius);
 		setAngularSpeed(speed);
 		rotate(angle);
+	}
+	
+	public boolean detectColor(int color) {
+		return colorSensor.getColorID() == color;
 	}
 }
