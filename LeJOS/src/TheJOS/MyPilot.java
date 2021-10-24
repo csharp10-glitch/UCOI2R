@@ -1,5 +1,6 @@
 package TheJOS;
 
+import lejos.hardware.lcd.LCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.port.MotorPort;
 import lejos.hardware.port.SensorPort;
@@ -57,7 +58,13 @@ public class MyPilot extends MovePilot{
 	
 	public boolean detectColor(int color, EV3ColorSensor colourBlue) {
 		SensorMode colourID = colourBlue.getMode("ColorID");
-		float[] colourSample = new float[colourBlue.getColorID()];
+		float[] colourSample = null;
+		if (colourBlue.getColorID() >=0) {
+			colourSample = new float[colourBlue.getColorID()];
+		}
+		else {
+			colourSample = new float[7];
+		}
 		colourID.fetchSample(colourSample,0);
 		int colour = (int) colourSample[0]; 
 		return colour == color;

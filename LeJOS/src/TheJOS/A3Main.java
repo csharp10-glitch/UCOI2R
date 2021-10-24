@@ -23,8 +23,8 @@ public class A3Main {
 	static final double PILOT_ANGULAR_SPEED = 10; // deg/s
 	static final double OFFSET = 20.32 * 0.8 * 0.5; // m, 1/2 track width times a correction modifier
 	static final double FWD_INCREMENT = 1; // m
-	static final double MAX_TURN_ANGLE = 90; // deg
-	static final double TURN_INCREMENT = 5; // deg
+	static final double MAX_TURN_ANGLE = 10; // deg
+	static final double TURN_INCREMENT = 1; // deg
 
 	public static void main(String[] args) {
 		EV3ColorSensor colourBlue = new EV3ColorSensor(SensorPort.S1);
@@ -35,24 +35,26 @@ public class A3Main {
 		boolean lineDetected = (pilot.detectColor(GO_LINE_COLOR1, colourBlue) | pilot.detectColor(GO_LINE_COLOR2, colourBlue));
 		if (!lineDetected) {
 			helpPilot(pilot, lineDetected, colourBlue);
-
 		}
-
-		while (true) {
+		
+		boolean go = true;
+		
+		while (go) {
 			pilot.travel(FWD_INCREMENT);
 
 			// stop moving if detects stop color
 			if (pilot.detectColor(STOP_COLOR1, colourBlue) | pilot.detectColor(STOP_COLOR2, colourBlue)) {
+				go = false;
 				break;
 			}
 
 			lineDetected = (pilot.detectColor(GO_LINE_COLOR1, colourBlue) | pilot.detectColor(GO_LINE_COLOR2, colourBlue));
 			if (!lineDetected) {
-				lineDetected = (pilot.checkLineLeft(MAX_TURN_ANGLE, TURN_INCREMENT, GO_LINE_COLOR1, colourBlue)|pilot.checkLineLeft(MAX_TURN_ANGLE, TURN_INCREMENT, GO_LINE_COLOR1, colourBlue));
+				lineDetected = (pilot.checkLineLeft(MAX_TURN_ANGLE, TURN_INCREMENT, GO_LINE_COLOR1, colourBlue)|pilot.checkLineLeft(MAX_TURN_ANGLE, TURN_INCREMENT, GO_LINE_COLOR2, colourBlue));
 				if (!lineDetected) {
 					// reset to prior position
-					pilot.rotate(MAX_TURN_ANGLE);
-					lineDetected = (pilot.checkLineRight(MAX_TURN_ANGLE, TURN_INCREMENT, GO_LINE_COLOR1, colourBlue)|pilot.checkLineRight(MAX_TURN_ANGLE, TURN_INCREMENT, GO_LINE_COLOR1, colourBlue));
+//					pilot.rotate(MAX_TURN_ANGLE);
+					lineDetected = (pilot.checkLineRight(MAX_TURN_ANGLE, TURN_INCREMENT, GO_LINE_COLOR1, colourBlue)|pilot.checkLineRight(MAX_TURN_ANGLE, TURN_INCREMENT, GO_LINE_COLOR2, colourBlue));
 
 					// if line still not found on right, wait for user to reposition
 					if (!lineDetected) {
@@ -71,9 +73,8 @@ public class A3Main {
 	public static void helpPilot(MyPilot pilot, boolean lineDetected, EV3ColorSensor colourBlue) {
 		while (!lineDetected) {
 			LCD.drawString("HELP! I'm LOST!", 0, 3);
-			Button.ENTER.waitForPressAndRelease();
+			Delay.msDelay(5000);
 			lineDetected = (pilot.detectColor(GO_LINE_COLOR1, colourBlue) | pilot.detectColor(GO_LINE_COLOR2, colourBlue));
-
 		}
 	}
 }
