@@ -70,6 +70,9 @@ public class MyPilot extends MovePilot{
 		if (colour == 13) {
 			return true;	
 		}
+		if (colour == 2) {
+			return true;	
+		}
 		
 		return colour == color;
 //		colorID colourID = new colorID();

@@ -18,7 +18,7 @@ public class A3Main {
 	static final int STOP_COLOR2 = 0;
 	static final int STOP_COLOR3 = Color.RED;
 	static final int STOP_COLOR4 = Color.RED;
-	
+
 	static final double PILOT_LINEAR_SPEED = 20; // m/s
 	static final double PILOT_ANGULAR_SPEED = 10; // deg/s
 	static final double OFFSET = 20.32 * 0.8 * 0.5; // m, 1/2 track width times a correction modifier
@@ -30,15 +30,14 @@ public class A3Main {
 		EV3ColorSensor colourBlue = new EV3ColorSensor(SensorPort.S1);
 		MyPilot pilot = new MyPilot(OFFSET, PILOT_LINEAR_SPEED, PILOT_ANGULAR_SPEED);
 
-
 		// check color at starting point. Prompt for help if not correct color
 		boolean lineDetected = (pilot.detectColor(GO_LINE_COLOR, colourBlue));
 		if (!lineDetected) {
 			helpPilot(pilot, lineDetected, colourBlue);
 		}
-		
+
 		boolean go = true;
-		
+
 		while (true) {
 			pilot.travel(FWD_INCREMENT);
 
@@ -61,16 +60,16 @@ public class A3Main {
 						}
 					}
 				}
-				
+
 				if (!lineDetected) {
 					helpPilot(pilot, lineDetected, colourBlue);
 					Delay.msDelay(5000);
 					break;
-					}
 				}
 			}
 		}
-	
+	}
+
 	/**
 	 * Pilot needs help repositioning from user.
 	 */
@@ -79,6 +78,21 @@ public class A3Main {
 			LCD.drawString("HELP! I'm LOST!", 0, 3);
 			Delay.msDelay(5000);
 			lineDetected = (pilot.detectColor(GO_LINE_COLOR, colourBlue));
+		}
+	}
+
+	public static void search(MyPilot pilot, boolean lineDetected, EV3ColorSensor colourBlue) {
+		if (!lineDetected) {
+			for (int turn = 1; turn <= MAX_TURN_ANGLE; turn++) {
+				lineDetected = (pilot.checkLineLeft(turn, TURN_INCREMENT, GO_LINE_COLOR, colourBlue));
+				if (!lineDetected) {
+					pilot.rotate(turn);
+					lineDetected = (pilot.checkLineRight(turn, TURN_INCREMENT, GO_LINE_COLOR, colourBlue));
+					if (!lineDetected) {
+						pilot.rotate(-turn);
+					}
+				}
+			}
 		}
 	}
 }
