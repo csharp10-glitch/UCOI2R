@@ -34,55 +34,38 @@ public class A3Rect {
 			helpPilot(pilot, lineDetected, colourBlue);
 		}
 
-		boolean go = true;
-
 		while (true) {
 			pilot.travel(FWD_INCREMENT);
-
-
 
 			lineDetected = (pilot.detectColor(GO_LINE_COLOR, colourBlue));
 			if (!lineDetected) {
 				int turn = 1;
+//				initiate sweep for line
 				for (turn = 1; turn <= MAX_TURN_ANGLE; turn++) {
 					lineDetected = (pilot.checkLineLeft(turn, TURN_INCREMENT, GO_LINE_COLOR, colourBlue));
-					pilot.rotate(1.2*turn);
+					pilot.rotate(1.2 * turn);
+//					if found during left sweep, travel so that axis is over corner, and turn
 					if (lineDetected & (turn > 4)) {
 						pilot.travel(14.5);
 						pilot.rotate(-87);
-//						while (!lineDetected) {
-//							lineDetected = search(pilot, lineDetected, colourBlue);
-//						}
-//						pilot.travel(2);
-//						while (!lineDetected) {
-//							lineDetected = search(pilot, lineDetected, colourBlue);
-//						}
 						turn = 0;
 						continue;
-						
-					}
 
+					}
 					if (!lineDetected) {
 						lineDetected = (pilot.checkLineRight(turn, TURN_INCREMENT, GO_LINE_COLOR, colourBlue));
 						pilot.rotate(-turn);
+//						if found during right sweep, travel so that axis is over corner, and turn
 						if (lineDetected & (turn > 4)) {
 							pilot.travel(14.5);
 							pilot.rotate(85);
-//							while (!lineDetected) {
-//								lineDetected = search(pilot, lineDetected, colourBlue);
-//							}
-//							pilot.travel(2);
-//							while (!lineDetected) {
-//								lineDetected = search(pilot, lineDetected, colourBlue);
-//							}
 							turn = 0;
 							continue;
 						}
 					}
-					if(lineDetected) {
+					if (lineDetected) {
 						break;
 					}
-//					pilot.rotate(-turn);
 				}
 
 				if (!lineDetected) {
@@ -104,23 +87,5 @@ public class A3Rect {
 			Delay.msDelay(5000);
 			lineDetected = (pilot.detectColor(GO_LINE_COLOR, colourBlue));
 		}
-	}
-
-	public static boolean search(MyPilot pilot, boolean lineDetected, EV3ColorSensor colourBlue) {
-		int turn = 1;
-		while (!lineDetected) {
-			if(turn <= MAX_TURN_ANGLE) {
-				lineDetected = (pilot.checkLineLeft(turn, TURN_INCREMENT, GO_LINE_COLOR, colourBlue));
-				if (!lineDetected) {
-					pilot.rotate(turn);
-					lineDetected = (pilot.checkLineRight(turn, TURN_INCREMENT, GO_LINE_COLOR, colourBlue));
-					if (!lineDetected) {
-						pilot.rotate(-turn);
-					}
-				}
-				turn++;
-			}
-		}
-		return lineDetected;
 	}
 }
