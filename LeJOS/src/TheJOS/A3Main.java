@@ -50,23 +50,25 @@ public class A3Main {
 
 			lineDetected = (pilot.detectColor(GO_LINE_COLOR1, colourBlue) | pilot.detectColor(GO_LINE_COLOR2, colourBlue));
 			if (!lineDetected) {
-				lineDetected = (pilot.checkLineLeft(MAX_TURN_ANGLE, TURN_INCREMENT, GO_LINE_COLOR1, colourBlue)|pilot.checkLineLeft(MAX_TURN_ANGLE, TURN_INCREMENT, GO_LINE_COLOR2, colourBlue));
-				if (!lineDetected) {
-					// reset to prior position
-//					pilot.rotate(MAX_TURN_ANGLE);
-					lineDetected = (pilot.checkLineRight(MAX_TURN_ANGLE, TURN_INCREMENT, GO_LINE_COLOR1, colourBlue)|pilot.checkLineRight(MAX_TURN_ANGLE, TURN_INCREMENT, GO_LINE_COLOR2, colourBlue));
-
-					// if line still not found on right, wait for user to reposition
+				for (int turn = 1; turn <= MAX_TURN_ANGLE; turn++) {
+					lineDetected = (pilot.checkLineLeft(turn, TURN_INCREMENT, GO_LINE_COLOR1, colourBlue)|pilot.checkLineLeft(turn, TURN_INCREMENT, GO_LINE_COLOR2, colourBlue));
 					if (!lineDetected) {
-						helpPilot(pilot, lineDetected, colourBlue);
-						Delay.msDelay(5000);
-						break;
+						lineDetected = (pilot.checkLineRight(2*turn, TURN_INCREMENT, GO_LINE_COLOR2, colourBlue)|pilot.checkLineRight(2*turn, TURN_INCREMENT, GO_LINE_COLOR1, colourBlue));
+						if (!lineDetected) {
+							pilot.rotate(turn);
+						}
+					}
+				}
+				
+				if (!lineDetected) {
+					helpPilot(pilot, lineDetected, colourBlue);
+					Delay.msDelay(5000);
+					break;
 					}
 				}
 			}
 		}
-	}
-
+	
 	/**
 	 * Pilot needs help repositioning from user.
 	 */
