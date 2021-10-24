@@ -35,7 +35,7 @@ public class MyPilot extends MovePilot{
 	public boolean checkLineLeft(double maxAngle, double increment, int lineColor, EV3ColorSensor colourBlue) {
 		for (double angleTurned = 0; angleTurned > -maxAngle; angleTurned -= increment) {
 			rotate(angleTurned);
-			if(detectColor(lineColor, colourBlue)) {
+			if(detectColor(lineColor, colourBlue)|detectColor(13, colourBlue)) {
 				return true;
 			}
 		}
@@ -49,7 +49,7 @@ public class MyPilot extends MovePilot{
 	public boolean checkLineRight(double maxAngle, double increment, int lineColor, EV3ColorSensor colourBlue) {
 		for (double angleTurned = 0; angleTurned < maxAngle; angleTurned += increment) {
 			rotate(angleTurned);
-			if(detectColor(lineColor, colourBlue)) {
+			if(detectColor(lineColor, colourBlue)|detectColor(13, colourBlue)) {
 				return true;
 			}
 		}
@@ -58,15 +58,22 @@ public class MyPilot extends MovePilot{
 	
 	public boolean detectColor(int color, EV3ColorSensor colourBlue) {
 		SensorMode colourID = colourBlue.getMode("ColorID");
-		float[] colourSample = null;
-		if (colourBlue.getColorID() >=0) {
-			colourSample = new float[colourBlue.getColorID()];
-		}
-		else {
-			colourSample = new float[7];
-		}
+		float[] colourSample = new float[1];
 		colourID.fetchSample(colourSample,0);
 		int colour = (int) colourSample[0]; 
+		if (colour == color) {
+			return true;	
+		}
+		if (colour == 1) {
+			return true;	
+		}
+		if (colour == 13) {
+			return true;	
+		}
+		
 		return colour == color;
+//		colorID colourID = new colorID();
+//		int colour = colourID.detectColor(colourBlue);
+//		return colour == color;
 	}
 }
