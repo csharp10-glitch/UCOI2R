@@ -1,5 +1,6 @@
 package a4;
 
+import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.port.Port;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.robotics.SampleProvider;
@@ -14,7 +15,7 @@ public class UltrasonicSensor {
 
 	public UltrasonicSensor(Port s1) {
 		sensor = new EV3UltrasonicSensor(s1);
-		distMode = sensor.getMode("Distance");
+		distMode = sensor.getDistanceMode();
 		average = new MeanFilter(distMode, 5);
 		sample = new float[average.sampleSize()];
 		average.fetchSample(sample, 0);

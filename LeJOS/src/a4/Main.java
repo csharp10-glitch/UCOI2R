@@ -17,29 +17,32 @@ public class Main {
 		boolean captured = false;
 
 		ColorSensor colorSensor = new ColorSensor(SensorPort.S4);
-//		UltrasonicSensor ussr = new UltrasonicSensor(SensorPort.S1);
+		UltrasonicSensor ussr = new UltrasonicSensor(SensorPort.S1);
 		TheClaw theClaw = new TheClaw(MotorPort.C);
+		Mast mast = new Mast(MotorPort.B);
 		int distance = 255;
 		
 		int d = 0;
 		
-		theClaw.startTest();
+//		mast.startTest();
+		mast.search();
+		
+//		theClaw.startTest();
 
-//		a4Pilot.travel();
-		while (!Button.ESCAPE.isDown() && !captured) {
-			a4Pilot.travel(0.5);
-			Delay.msDelay(500);
-			if ((colorSensor.getColor() == Color.BLUE)|(colorSensor.getColor() == 7)|(colorSensor.getColor() == 1)) {
-				a4Pilot.travel(4.2);
-				theClaw.grab();
-				if(Math.abs(theClaw.checkRotation()-theClaw.closedRotation)<5) {
-					captured = true;
-				}
-				
-			}
-			
-//			d++;
-		}
+//		while (!Button.ESCAPE.isDown() && !captured) {
+//			a4Pilot.travel(0.5);
+//			Delay.msDelay(500);
+//			if ((colorSensor.getColor() == Color.BLUE)||(colorSensor.getColor() == 7)||(colorSensor.getColor() == 1)) {
+//				a4Pilot.travel(4.2);
+//				theClaw.grab();
+//				if(Math.abs(theClaw.checkRotation()-theClaw.closedRotation)<5) {
+//					captured = true;
+//				}
+//				
+//			}
+//			
+////			d++;
+//		}
 
 	}
 
