@@ -1,5 +1,7 @@
 package a4;
 
+import org.opencv.core.RotatedRect;
+
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.port.Port;
 
@@ -9,7 +11,7 @@ public class Mast {
 	private int maxRotation = 90;
 //	private int deltaRotation;
 	private int currentRotation;
-	private EV3MediumRegulatedMotor mastMotor;
+	public EV3MediumRegulatedMotor mastMotor;
 	private Port mastPort;
 
 	public Mast() {
@@ -49,6 +51,19 @@ public class Mast {
 			mastMotor.rotate(searchArc);
 		}
 		mastMotor.rotateTo(0);
+	}
+	
+	public void startIncSearch() {
+		mastMotor.rotateTo(minRotation);
+	}
+	
+	public void incrementalSearch() {
+		if (currentRotation>=maxRotation) {
+			mastMotor.rotateTo(minRotation);
+		}
+		else {
+			mastMotor.rotate(23);
+		}
 	}
 
 }

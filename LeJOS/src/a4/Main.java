@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lejos.hardware.Button;
+import lejos.hardware.Sound;
 import lejos.hardware.lcd.LCD;
 import lejos.hardware.port.MotorPort;
 import lejos.hardware.port.SensorPort;
@@ -21,28 +22,50 @@ public class Main {
 		TheClaw theClaw = new TheClaw(MotorPort.C);
 		Mast mast = new Mast(MotorPort.B);
 		int distance = 255;
-		
+
 		int d = 0;
-		
-//		mast.startTest();
+
 		mast.search();
-		
+
 //		theClaw.startTest();
 
-//		while (!Button.ESCAPE.isDown() && !captured) {
-//			a4Pilot.travel(0.5);
-//			Delay.msDelay(500);
-//			if ((colorSensor.getColor() == Color.BLUE)||(colorSensor.getColor() == 7)||(colorSensor.getColor() == 1)) {
-//				a4Pilot.travel(4.2);
-//				theClaw.grab();
-//				if(Math.abs(theClaw.checkRotation()-theClaw.closedRotation)<5) {
-//					captured = true;
-//				}
-//				
-//			}
-//			
-////			d++;
-//		}
+		while (!Button.ESCAPE.isDown() && !captured) {
+			a4Pilot.travel(0.5);
+			Delay.msDelay(500);
+			mast.startIncSearch();
+			
+			search: {
+				for (int i = 0; i < 8; i++) {
+					mast.incrementalSearch();
+					d = ussr.distance();
+					System.out.println(d);
+					if (d == 0) {
+						break search;
+					}
+				}
+			}
+			
+			if (d == 0) {
+				for (int i = 0; i < 3; i++) {
+					Sound.playTone(500, 800);
+					Delay.msDelay(200);
+				}
+				Sound.playTone(1000, 800);
+			}
+
+			if ((colorSensor.getColor() == Color.BLUE) || (colorSensor.getColor() == 7)
+					|| (colorSensor.getColor() == 1)) {
+				a4Pilot.travel(4.2);
+				theClaw.grab();
+				if (Math.abs(theClaw.checkRotation() - theClaw.closedRotation) < 5) {
+					captured = true;
+				}
+
+			}
+
+//			d++;
+		}
+		mast.mastMotor.rotateTo(0);
 
 	}
 

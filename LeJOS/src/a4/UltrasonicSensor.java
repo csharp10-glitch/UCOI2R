@@ -15,16 +15,18 @@ public class UltrasonicSensor {
 
 	public UltrasonicSensor(Port s1) {
 		sensor = new EV3UltrasonicSensor(s1);
-		distMode = sensor.getDistanceMode();
-		average = new MeanFilter(distMode, 5);
-		sample = new float[average.sampleSize()];
-		average.fetchSample(sample, 0);
+		distMode = sensor.getMode("Distance");
+		distance = 255;
+//		average = new MeanFilter(distMode, 5);
+//		sample = new float[average.sampleSize()];
+//		average.fetchSample(sample, 0);
 	}
 
 	public int distance() {
-		sample = new float[distMode.sampleSize()];
+		float [] sample = new float[distMode.sampleSize()];
 		distMode.fetchSample(sample, 0);
-		distance = (int) sample[0];
+		distance = (int)(sample[0]*10);
+		System.out.println(distance);
 		return distance;
 	}
 
