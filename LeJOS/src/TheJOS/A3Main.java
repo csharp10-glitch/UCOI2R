@@ -10,14 +10,8 @@ import lejos.utility.Delay;
 
 public class A3Main {
 	// User Configs - Will need to tweak during troubleshooting
-	static final int GO_LINE_COLOR = 6;
-	static final int GO_LINE_COLOR2 = 13;
-	static final int GO_LINE_COLOR3 = Color.BLUE;
-	static final int GO_LINE_COLOR4 = Color.BLUE;
-	static final int STOP_COLOR = 2;
-	static final int STOP_COLOR2 = 0;
-	static final int STOP_COLOR3 = Color.RED;
-	static final int STOP_COLOR4 = Color.RED;
+	static final int GO_LINE_COLOR = Color.BLUE;
+	static final int STOP_COLOR = Color.RED;
 
 	static final double PILOT_LINEAR_SPEED = 20; // m/s
 	static final double PILOT_ANGULAR_SPEED = 10; // deg/s
@@ -42,11 +36,11 @@ public class A3Main {
 			pilot.travel(FWD_INCREMENT);
 
 			// stop moving if detects stop color
-//			if (pilot.detectColor(STOP_COLOR, colourBlue)) {
-//				LCD.drawString("STOP!", 0, 3);
-//				Delay.msDelay(5000);
-//				break;
-//			}
+			if (pilot.detectColor(STOP_COLOR, colourBlue)) {
+				LCD.drawString("STOP!", 0, 3);
+				Delay.msDelay(5000);
+				break;
+			}
 
 			lineDetected = (pilot.detectColor(GO_LINE_COLOR, colourBlue));
 			if (!lineDetected) {
@@ -78,21 +72,6 @@ public class A3Main {
 			LCD.drawString("HELP! I'm LOST!", 0, 3);
 			Delay.msDelay(5000);
 			lineDetected = (pilot.detectColor(GO_LINE_COLOR, colourBlue));
-		}
-	}
-
-	public static void search(MyPilot pilot, boolean lineDetected, EV3ColorSensor colourBlue) {
-		if (!lineDetected) {
-			for (int turn = 1; turn <= MAX_TURN_ANGLE; turn++) {
-				lineDetected = (pilot.checkLineLeft(turn, TURN_INCREMENT, GO_LINE_COLOR, colourBlue));
-				if (!lineDetected) {
-					pilot.rotate(turn);
-					lineDetected = (pilot.checkLineRight(turn, TURN_INCREMENT, GO_LINE_COLOR, colourBlue));
-					if (!lineDetected) {
-						pilot.rotate(-turn);
-					}
-				}
-			}
 		}
 	}
 }

@@ -6,10 +6,10 @@ import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.robotics.Color;
 import lejos.utility.Delay;
 
-public class A3Rect {
+public class A3R2 {
 	// User Configs - Will need to tweak during troubleshooting
-	static final int GO_LINE_COLOR = Color.BLUE;
-	static final int STOP_COLOR = Color.RED;
+	static final int GO_LINE_COLOR = 1;
+	static final int STOP_COLOR = 0;
 
 	static final double PILOT_LINEAR_SPEED = 20; // m/s
 	static final double PILOT_ANGULAR_SPEED = 10; // deg/s

@@ -14,7 +14,7 @@ public class BatteryTest {
 		@SuppressWarnings("deprecation")
 		double diam = DifferentialPilot.WHEEL_SIZE_NXT1;
 		double trackwidth = 7;
-		DifferentialPilot rov3r = new DifferentialPilot(diam, trackwidth, Motor.C, Motor.B);
+		DifferentialPilot rov3r = new DifferentialPilot(diam, trackwidth, Motor.D, Motor.A);
 
 		rov3r.travel(25.4);
 		System.out.println(Battery.getMotorCurrent());
