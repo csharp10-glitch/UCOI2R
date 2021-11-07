@@ -21,15 +21,24 @@ public class Main {
 		TheClaw theClaw = new TheClaw(MotorPort.C);
 		int distance = 255;
 		
+		int d = 0;
+		
 		theClaw.startTest();
 
 //		a4Pilot.travel();
 		while (!Button.ESCAPE.isDown() && !captured) {
-			if (colorSensor.getColor() == Color.BLUE) {
-				a4Pilot.travel(3);
+			a4Pilot.travel(0.5);
+			Delay.msDelay(500);
+			if ((colorSensor.getColor() == Color.BLUE)|(colorSensor.getColor() == 7)|(colorSensor.getColor() == 1)) {
+				a4Pilot.travel(4.2);
 				theClaw.grab();
+				if(Math.abs(theClaw.checkRotation()-theClaw.closedRotation)<5) {
+					captured = true;
+				}
 				
 			}
+			
+//			d++;
 		}
 
 	}

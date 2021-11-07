@@ -38,12 +38,18 @@ public class TheClaw {
 			}
 			clawMotor.resetTachoCount();
 			openRotation = clawMotor.getLimitAngle();
-			clawMotor.rotateTo(openRotation+3);
+			clawMotor.rotateTo(openRotation-15);
 		}
 	}
 	
 	public void grab() {
 		clawMotor.rotateTo(closedRotation-3);
+		currentRotation = clawMotor.getLimitAngle();
+	}
+	
+	public int checkRotation() {
+		currentRotation = clawMotor.getLimitAngle();
+		return currentRotation;
 	}
 	
 	
