@@ -1,6 +1,7 @@
 package a4;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import lejos.hardware.Button;
@@ -28,7 +29,7 @@ public class Main {
 		mast.search();
 
 //		theClaw.startTest();
-
+		List<Integer> distanceSamples = new ArrayList<>();
 		while (!Button.ESCAPE.isDown() && !captured) {
 			a4Pilot.travel(0.5);
 			Delay.msDelay(500);
@@ -39,19 +40,21 @@ public class Main {
 					mast.incrementalSearch();
 					d = ussr.distance();
 					System.out.println(d);
-					if (d == 0) {
+					if (d <= 0) {
+						for (int j = 0; j < 3; j++) {
+							Sound.playTone(500, 800);
+							Delay.msDelay(200);
+						}
+						Sound.playTone(1000, 800);
 						break search;
+					} else {
+						distanceSamples.add(d);
 					}
 				}
 			}
 			
-			if (d == 0) {
-				for (int i = 0; i < 3; i++) {
-					Sound.playTone(500, 800);
-					Delay.msDelay(200);
-				}
-				Sound.playTone(1000, 800);
-			}
+			int closestAngle = Collections.min(distanceSamples);
+			a4Pilot.rotate(closestAngle);
 
 			if ((colorSensor.getColor() == Color.BLUE) || (colorSensor.getColor() == 7)
 					|| (colorSensor.getColor() == 1)) {
@@ -60,8 +63,9 @@ public class Main {
 				if (Math.abs(theClaw.checkRotation() - theClaw.closedRotation) < 5) {
 					captured = true;
 				}
-
 			}
+			
+			distanceSamples.clear();
 
 //			d++;
 		}
