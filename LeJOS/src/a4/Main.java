@@ -1,12 +1,11 @@
 package a4;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import lejos.hardware.Button;
 import lejos.hardware.Sound;
-import lejos.hardware.lcd.LCD;
 import lejos.hardware.port.MotorPort;
 import lejos.hardware.port.SensorPort;
 import lejos.robotics.Color;
@@ -29,7 +28,7 @@ public class Main {
 		mast.search();
 
 //		theClaw.startTest();
-		List<Integer> distanceSamples = new ArrayList<>();
+		Map<Integer, Integer> distanceAngle = new HashMap<>();
 		while (!Button.ESCAPE.isDown() && !captured) {
 			a4Pilot.travel(0.5);
 			Delay.msDelay(500);
@@ -48,13 +47,13 @@ public class Main {
 						Sound.playTone(1000, 800);
 						break search;
 					} else {
-						distanceSamples.add(d);
+						distanceAngle.put(d, mast.checkRotation());
 					}
 				}
 			}
 			
-			int closestAngle = Collections.min(distanceSamples);
-			a4Pilot.rotate(closestAngle);
+			int minDistance = Collections.min(distanceAngle.keySet());
+			a4Pilot.rotate(distanceAngle.get(minDistance)*-2.0); //-2 multiplier for gearing
 
 			if ((colorSensor.getColor() == Color.BLUE) || (colorSensor.getColor() == 7)
 					|| (colorSensor.getColor() == 1)) {
@@ -65,7 +64,7 @@ public class Main {
 				}
 			}
 			
-			distanceSamples.clear();
+			distanceAngle.clear();
 
 //			d++;
 		}
