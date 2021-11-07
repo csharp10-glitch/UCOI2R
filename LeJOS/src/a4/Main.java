@@ -53,7 +53,7 @@ public class Main {
 			}
 			
 			int minDistance = Collections.min(distanceAngle.keySet());
-			a4Pilot.rotate(distanceAngle.get(minDistance)*-2); //-2 multiplier for gearing
+			a4Pilot.rotate(distanceAngle.get(minDistance)*-2.0); //-2 multiplier for gearing
 
 			if ((colorSensor.getColor() == Color.BLUE) || (colorSensor.getColor() == 7)
 					|| (colorSensor.getColor() == 1)) {
