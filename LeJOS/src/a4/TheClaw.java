@@ -11,21 +11,21 @@ public class TheClaw {
 	int deltaRotation;
 	int currentRotation;
 	
-	public TheClaw(Port b) {
-		this.clawPort = b;
-		clawMotor = new EV3MediumRegulatedMotor(b);
-		while (!clawMotor.isStalled()) {
-			clawMotor.rotate(5);
-		}
-		clawMotor.resetTachoCount();
-		openRotation = clawMotor.getLimitAngle();
-		clawMotor.rotate(-5);
+	public TheClaw(Port c) {
+		this.clawPort = c;
+		clawMotor = new EV3MediumRegulatedMotor(c);
 		while (!clawMotor.isStalled()) {
 			clawMotor.rotate(-5);
 		}
+		clawMotor.resetTachoCount();
+		openRotation = clawMotor.getLimitAngle();
+		clawMotor.rotate(5);
+		while (!clawMotor.isStalled()) {
+			clawMotor.rotate(5);
+		}
 		closedRotation = clawMotor.getLimitAngle();
 		deltaRotation = closedRotation - openRotation;
-		clawMotor.rotateTo(openRotation-3);
+		clawMotor.rotateTo(openRotation+3);
 		currentRotation = clawMotor.getLimitAngle();
 	}
 	
@@ -34,16 +34,16 @@ public class TheClaw {
 		int diff = Math.abs(clawMotor.getLimitAngle() - openRotation);
 		if (diff > 5) {
 			while (!clawMotor.isStalled()) {
-				clawMotor.rotate(5);
+				clawMotor.rotate(-5);
 			}
 			clawMotor.resetTachoCount();
 			openRotation = clawMotor.getLimitAngle();
-			clawMotor.rotateTo(openRotation-3);
+			clawMotor.rotateTo(openRotation+3);
 		}
 	}
 	
 	public void grab() {
-		clawMotor.rotateTo(closedRotation+3);
+		clawMotor.rotateTo(closedRotation-3);
 	}
 	
 	

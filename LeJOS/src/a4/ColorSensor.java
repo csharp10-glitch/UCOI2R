@@ -12,7 +12,7 @@ public class ColorSensor {
 
 	public ColorSensor(Port s4) {
 		sensor = new EV3ColorSensor(s4);
-		color = sensor.getMode("Color");
+		color = sensor.getMode("ColorID");
 	}
 
 	public int getColor() {
