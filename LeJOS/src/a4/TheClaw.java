@@ -38,7 +38,7 @@ public class TheClaw {
 			}
 			clawMotor.resetTachoCount();
 			openRotation = clawMotor.getLimitAngle();
-			clawMotor.rotateTo(openRotation-15);
+			clawMotor.rotateTo(openRotation-10);
 		}
 	}
 	

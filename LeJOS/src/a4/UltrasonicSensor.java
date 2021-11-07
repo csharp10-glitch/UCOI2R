@@ -25,7 +25,7 @@ public class UltrasonicSensor {
 	public int distance() {
 		float [] sample = new float[distMode.sampleSize()];
 		distMode.fetchSample(sample, 0);
-		distance = (int)(sample[0]*10);
+		distance = (int)(sample[0]*100);
 		System.out.println(distance);
 		return distance;
 	}
