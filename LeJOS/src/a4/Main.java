@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.opencv.core.Mat;
+
 import lejos.hardware.Button;
 import lejos.hardware.Sound;
 import lejos.hardware.port.MotorPort;
@@ -28,32 +30,35 @@ public class Main {
 		mast.search();
 
 //		theClaw.startTest();
-		Map<Integer, Integer> distanceAngle = new HashMap<>();
+
 		while (!Button.ESCAPE.isDown() && !captured) {
-			a4Pilot.travel(0.5);
-			Delay.msDelay(500);
+			Map<Integer, Integer> distanceAngle = new HashMap<>();
+			distanceAngle.put(1000, 0);
+			a4Pilot.travel(1);
 			mast.startIncSearch();
-			
-			search: {
-				for (int i = 0; i < 8; i++) {
-					mast.incrementalSearch();
-					d = ussr.distance();
-					System.out.println(d);
-					if (d <= 0) {
-						for (int j = 0; j < 3; j++) {
-							Sound.playTone(500, 800);
-							Delay.msDelay(200);
-						}
-						Sound.playTone(1000, 800);
-						break search;
-					} else {
-						distanceAngle.put(d, mast.checkRotation());
-					}
+
+			for (int i = 0; i < 18; i++) {
+				mast.incrementalSearch();
+				Delay.msDelay(100);
+				d = ussr.distance();
+				System.out.println(d);
+				if ((d <= 300) && (d >= 100)) {
+					distanceAngle.put(d, mast.checkRotation());
 				}
+
 			}
-			
-			int minDistance = Collections.min(distanceAngle.keySet());
-			a4Pilot.rotate(distanceAngle.get(minDistance)*-2.0); //-2 multiplier for gearing
+
+			if (distanceAngle != null) {
+				int minDistance = Collections.min(distanceAngle.keySet());
+				System.out.println("kv: " + minDistance + ":" + distanceAngle.get(minDistance));
+//				a4Pilot.rotate(distanceAngle.get(minDistance) * 0.5); // -2 multiplier for gearing
+				if (distanceAngle.get(minDistance) > 0) {
+					a4Pilot.rotate(Math.min(5, distanceAngle.get(minDistance)*0.5));
+				} else if (distanceAngle.get(minDistance) < 0) {
+					a4Pilot.rotate(Math.max(-5, distanceAngle.get(minDistance)*0.5));
+				}
+				distanceAngle = null;
+			}
 
 			if ((colorSensor.getColor() == Color.BLUE) || (colorSensor.getColor() == 7)
 					|| (colorSensor.getColor() == 1)) {
@@ -63,8 +68,8 @@ public class Main {
 					captured = true;
 				}
 			}
-			
-			distanceAngle.clear();
+
+//			distanceAngle.clear();
 
 //			d++;
 		}

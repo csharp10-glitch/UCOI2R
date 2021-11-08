@@ -7,8 +7,8 @@ import lejos.hardware.port.Port;
 
 public class Mast {
 
-	private int minRotation = -90;
-	private int maxRotation = 90;
+	private int minRotation = -45;
+	private int maxRotation = 45;
 //	private int deltaRotation;
 	private int currentRotation;
 	public EV3MediumRegulatedMotor mastMotor;
@@ -62,7 +62,7 @@ public class Mast {
 			mastMotor.rotateTo(minRotation);
 		}
 		else {
-			mastMotor.rotate(23);
+			mastMotor.rotate(5);
 		}
 	}
 
