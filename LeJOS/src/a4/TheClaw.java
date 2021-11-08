@@ -11,35 +11,30 @@ public class TheClaw {
 	int deltaRotation;
 	int currentRotation;
 	
+	// Initiate THE CLAW!
 	public TheClaw(Port c) {
 		this.clawPort = c;
 		clawMotor = new EV3MediumRegulatedMotor(c);
+		
+		// automatically find the widest open angle for the claw
 		while (!clawMotor.isStalled()) {
 			clawMotor.rotate(-5);
 		}
+		// set the stalled position to zer0
 		clawMotor.resetTachoCount();
 		openRotation = clawMotor.getLimitAngle();
+		
+		// unstall
 		clawMotor.rotate(5);
+		// look for completely closed rotation
 		while (!clawMotor.isStalled()) {
 			clawMotor.rotate(5);
 		}
 		closedRotation = clawMotor.getLimitAngle();
 		deltaRotation = closedRotation - openRotation;
-		clawMotor.rotateTo(openRotation+3);
+		// open that bad boy up
+		clawMotor.rotateTo(25);
 		currentRotation = clawMotor.getLimitAngle();
-	}
-	
-	public void startTest() {
-		// confirm claw is open, or open claw
-		int diff = Math.abs(clawMotor.getLimitAngle() - openRotation);
-		if (diff > 5) {
-			while (!clawMotor.isStalled()) {
-				clawMotor.rotate(-5);
-			}
-			clawMotor.resetTachoCount();
-			openRotation = clawMotor.getLimitAngle();
-			clawMotor.rotateTo(openRotation-10);
-		}
 	}
 	
 	public void grab() {

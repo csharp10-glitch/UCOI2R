@@ -27,42 +27,44 @@ public class Main {
 
 		int d = 0;
 
-		mast.search();
-
+//		mast.search();
 //		theClaw.startTest();
 
 		while (!Button.ESCAPE.isDown() && !captured) {
 			Map<Integer, Integer> distanceAngle = new HashMap<>();
-			distanceAngle.put(1000, 0);
+			distanceAngle.put(1000, 0); // ensures there is a minimum element in distanceAngle
 			a4Pilot.travel(1);
 			mast.startIncSearch();
 
-			for (int i = 0; i < 18; i++) {
+			// look to the right a little and see if there is something there
+			for (int i = 0; i < 22; i++) {
 				mast.incrementalSearch();
 				Delay.msDelay(100);
 				d = ussr.distance();
-				System.out.println(d);
+				System.out.println(d); 
+				// crude easy noise filter
 				if ((d <= 300) && (d >= 100)) {
 					distanceAngle.put(d, mast.checkRotation());
 				}
 
 			}
 
-			if (distanceAngle != null) {
+			if (distanceAngle != null) {  // always look before you leap
 				int minDistance = Collections.min(distanceAngle.keySet());
 				System.out.println("kv: " + minDistance + ":" + distanceAngle.get(minDistance));
-//				a4Pilot.rotate(distanceAngle.get(minDistance) * 0.5); // -2 multiplier for gearing
+				// turn in the direction of the ball up to 5 degrees. any more and we risk running wild
 				if (distanceAngle.get(minDistance) > 0) {
-					a4Pilot.rotate(Math.min(5, distanceAngle.get(minDistance)*0.5));
+					a4Pilot.rotate(Math.min(5, distanceAngle.get(minDistance)*0.5)); //0.5 gear ratio
 				} else if (distanceAngle.get(minDistance) < 0) {
 					a4Pilot.rotate(Math.max(-5, distanceAngle.get(minDistance)*0.5));
 				}
+				// destroy distance angle
 				distanceAngle = null;
 			}
 
-			if ((colorSensor.getColor() == Color.BLUE) || (colorSensor.getColor() == 7)
+			if ((colorSensor.getColor() == Color.BLUE) || (colorSensor.getColor() == 7) // empirical neccessities 
 					|| (colorSensor.getColor() == 1)) {
-				a4Pilot.travel(4.2);
+				a4Pilot.travel(5);
 				theClaw.grab();
 				if (Math.abs(theClaw.checkRotation() - theClaw.closedRotation) < 5) {
 					captured = true;
@@ -70,9 +72,9 @@ public class Main {
 			}
 
 //			distanceAngle.clear();
-
-//			d++;
 		}
+		// We cant automate the masts angles like we can the claw due to the gear train (it pops loose), 
+		// so for convienience we put it back home
 		mast.mastMotor.rotateTo(0);
 
 	}
