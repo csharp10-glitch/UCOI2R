@@ -45,7 +45,7 @@ public class A5 {
 		ShortestPathFinder pathPlanner = new ShortestPathFinder(map);
 		pathPlanner.lengthenLines(bufferSpaceForWall);	
 		
-		//Data structure for future DFS implementation
+		//Data structure for future DFS implementation. See https://www.youtube.com/watch?v=iaBEKo5sM7w
 		Stack<Point> stack = new Stack<>();
 		Point startPt = new Point(340,420); // Update as needed
 		stack.add(startPt);
