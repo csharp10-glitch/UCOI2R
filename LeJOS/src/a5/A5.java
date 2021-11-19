@@ -26,7 +26,7 @@ import lejos.robotics.pathfinding.ShortestPathFinder;
 import lejos.utility.Delay;
 
 public class A5 {
-	final static float distanceFromWall = 24.0f; // min distance (mm) away from the line. in our case wall
+	final static float bufferSpaceForWall = 24.0f; // min distance (mm) away from the line. in our case wall
 
 	public static void main(String[] args) {
 		
@@ -43,7 +43,7 @@ public class A5 {
 		// Mapping
 		LineMap map = A5.initializeMap();
 		ShortestPathFinder pathPlanner = new ShortestPathFinder(map);
-		pathPlanner.lengthenLines(distanceFromWall);	
+		pathPlanner.lengthenLines(bufferSpaceForWall);	
 		
 		//Data structure for future DFS implementation
 		Stack<Point> stack = new Stack<>();
