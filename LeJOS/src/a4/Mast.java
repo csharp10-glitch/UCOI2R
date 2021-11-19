@@ -7,41 +7,27 @@ import lejos.hardware.port.Port;
 
 public class Mast {
 
-	private int minRotation = -90;
-	private int maxRotation = 90;
+	private int minRotation = -55;
+	private int maxRotation = 55;
 //	private int deltaRotation;
 	private int currentRotation;
 	public EV3MediumRegulatedMotor mastMotor;
 	private Port mastPort;
-
-	public Mast() {
-		// TODO Auto-generated constructor stub
-	}
 	
+	// Initialize sonar mast
 	public Mast(Port c) {
 		mastPort = c;
 		mastMotor = new EV3MediumRegulatedMotor(c);
 		currentRotation = 0;
 	}
 	
-	public void startTest() {
-		// confirm claw is open, or open claw
-		int diff = Math.abs(mastMotor.getLimitAngle() - minRotation);
-		if (diff > 5) {
-			while (!mastMotor.isStalled()) {
-				mastMotor.rotate(-5);
-			}
-			mastMotor.resetTachoCount();
-			minRotation = mastMotor.getLimitAngle();
-			mastMotor.rotateTo(minRotation-15);
-		}
-	}
-	
+	// rotation getter
 	public int checkRotation() {
 		currentRotation = mastMotor.getLimitAngle();
 		return currentRotation;
 	}
 	
+	// future search pattern work
 	public void search() {
 		mastMotor.rotateTo(minRotation);
 		int searchInterval = 8;
@@ -53,16 +39,18 @@ public class Mast {
 		mastMotor.rotateTo(0);
 	}
 	
+	//reset rotation to the left
 	public void startIncSearch() {
 		mastMotor.rotateTo(minRotation);
 	}
 	
+	// start looking right
 	public void incrementalSearch() {
 		if (currentRotation>=maxRotation) {
 			mastMotor.rotateTo(minRotation);
 		}
 		else {
-			mastMotor.rotate(23);
+			mastMotor.rotate(5);
 		}
 	}
 

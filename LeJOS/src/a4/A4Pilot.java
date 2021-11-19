@@ -10,9 +10,6 @@ import lejos.robotics.navigation.MoveController;
 import lejos.robotics.navigation.MovePilot;
 
 public class A4Pilot extends MovePilot {
-	static final int BALL_COLOR = Color.BLUE;
-	static final int STOP_COLOR = Color.RED;
-
 	static final double PILOT_LINEAR_SPEED = 20; // m/s
 	static final double PILOT_ANGULAR_SPEED = 10; // deg/s
 	static final double OFFSET = 20.32 * 0.8 * 0.5; // m, 1/2 track width times a correction modifier
@@ -20,12 +17,14 @@ public class A4Pilot extends MovePilot {
 	static final double MAX_TURN_ANGLE = 15; // deg
 	static final double TURN_INCREMENT = 1; // deg
 	
+	// Our default pilot constructing
 	public A4Pilot() {
 		super(initChassis(OFFSET));
 		setLinearSpeed(PILOT_LINEAR_SPEED);
 		setAngularSpeed(PILOT_ANGULAR_SPEED);
 	}
 	
+	// Our default chassis settings
 	static Chassis initChassis(double wheelOffset) {
 		double wheelDiam = MoveController.WHEEL_SIZE_NXT1;
 		EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(MotorPort.D);

@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.opencv.core.Mat;
+
 import lejos.hardware.Button;
 import lejos.hardware.Sound;
 import lejos.hardware.port.MotorPort;
@@ -25,49 +27,54 @@ public class Main {
 
 		int d = 0;
 
-		mast.search();
-
+//		mast.search();
 //		theClaw.startTest();
-		Map<Integer, Integer> distanceAngle = new HashMap<>();
-		while (!Button.ESCAPE.isDown() && !captured) {
-			a4Pilot.travel(0.5);
-			Delay.msDelay(500);
-			mast.startIncSearch();
-			
-			search: {
-				for (int i = 0; i < 8; i++) {
-					mast.incrementalSearch();
-					d = ussr.distance();
-					System.out.println(d);
-					if (d <= 0) {
-						for (int j = 0; j < 3; j++) {
-							Sound.playTone(500, 800);
-							Delay.msDelay(200);
-						}
-						Sound.playTone(1000, 800);
-						break search;
-					} else {
-						distanceAngle.put(d, mast.checkRotation());
-					}
-				}
-			}
-			
-			int minDistance = Collections.min(distanceAngle.keySet());
-			a4Pilot.rotate(distanceAngle.get(minDistance)*-2.0); //-2 multiplier for gearing
 
-			if ((colorSensor.getColor() == Color.BLUE) || (colorSensor.getColor() == 7)
+		while (!Button.ESCAPE.isDown() && !captured) {
+			Map<Integer, Integer> distanceAngle = new HashMap<>();
+			distanceAngle.put(1000, 0); // ensures there is a minimum element in distanceAngle
+			a4Pilot.travel(1);
+			mast.startIncSearch();
+
+			// look to the right a little and see if there is something there
+			for (int i = 0; i < 22; i++) {
+				mast.incrementalSearch();
+				Delay.msDelay(100);
+				d = ussr.distance();
+				System.out.println(d); 
+				// crude easy noise filter
+				if ((d <= 300) && (d >= 100)) {
+					distanceAngle.put(d, mast.checkRotation());
+				}
+
+			}
+
+			if (distanceAngle != null) {  // always look before you leap
+				int minDistance = Collections.min(distanceAngle.keySet());
+				System.out.println("kv: " + minDistance + ":" + distanceAngle.get(minDistance));
+				// turn in the direction of the ball up to 5 degrees. any more and we risk running wild
+				if (distanceAngle.get(minDistance) > 0) {
+					a4Pilot.rotate(Math.min(5, distanceAngle.get(minDistance)*0.5)); //0.5 gear ratio
+				} else if (distanceAngle.get(minDistance) < 0) {
+					a4Pilot.rotate(Math.max(-5, distanceAngle.get(minDistance)*0.5));
+				}
+				// destroy distance angle
+				distanceAngle = null;
+			}
+
+			if ((colorSensor.getColor() == Color.BLUE) || (colorSensor.getColor() == 7) // empirical neccessities 
 					|| (colorSensor.getColor() == 1)) {
-				a4Pilot.travel(4.2);
+				a4Pilot.travel(5);
 				theClaw.grab();
 				if (Math.abs(theClaw.checkRotation() - theClaw.closedRotation) < 5) {
 					captured = true;
 				}
 			}
-			
-			distanceAngle.clear();
 
-//			d++;
+//			distanceAngle.clear();
 		}
+		// We cant automate the masts angles like we can the claw due to the gear train (it pops loose), 
+		// so for convienience we put it back home
 		mast.mastMotor.rotateTo(0);
 
 	}

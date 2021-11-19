@@ -4,17 +4,21 @@ import lejos.hardware.port.Port;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.robotics.SampleProvider;
 
+
+// For the lazy
 public class ColorSensor {
 	EV3ColorSensor sensor;
 	SampleProvider color;
 	int mode;
 	float[] sample;
 
+	// Initialize sensor and sampler
 	public ColorSensor(Port s4) {
 		sensor = new EV3ColorSensor(s4);
 		color = sensor.getMode("ColorID");
 	}
 
+	// return color mode code
 	public int getColor() {
 		sample = new float[color.sampleSize()];
 		color.fetchSample(sample, 0);
@@ -22,6 +26,7 @@ public class ColorSensor {
 		return getMode();
 	}
 
+	
 	public void setMode(int newMode) {
 		this.mode = newMode;
 	}
@@ -30,6 +35,7 @@ public class ColorSensor {
 		return mode;
 	}
 
+	// looks through the sample for the statistical mode
 	public int mode(float[] sample) {
 		int modeCount1 = 0;
 		int key1 = 0;

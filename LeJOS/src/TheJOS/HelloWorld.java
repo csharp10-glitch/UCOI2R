@@ -19,22 +19,22 @@ public class HelloWorld {
 				}
 				Sound.playTone(1000, 800);
 				
-				// Initialize motors:
-				UnregulatedMotor b = new UnregulatedMotor(MotorPort.B);
-				UnregulatedMotor c = new UnregulatedMotor(MotorPort.C);
-				b.setPower(100);
-				c.setPower(100);
-				
-				// Start rotating motors:
-				b.forward();
-				c.forward();
-				Delay.msDelay(1500);
-				
-				// Stop motors and close:
-				b.flt();
-				c.flt();
-				b.close();
-				c.close();
+//				// Initialize motors:
+//				UnregulatedMotor b = new UnregulatedMotor(MotorPort.B);
+//				UnregulatedMotor c = new UnregulatedMotor(MotorPort.C);
+//				b.setPower(100);
+//				c.setPower(100);
+//				
+//				// Start rotating motors:
+//				b.forward();
+//				c.forward();
+//				Delay.msDelay(1500);
+//				
+//				// Stop motors and close:
+//				b.flt();
+//				c.flt();
+//				b.close();
+//				c.close();
 				
 				Sound.beep();
 //				RegulatedMotor a = new EV3MediumRegulatedMotor(MotorPort.A);
