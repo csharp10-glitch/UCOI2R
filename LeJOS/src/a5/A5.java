@@ -23,6 +23,8 @@ import lejos.robotics.navigation.Pose;
 import lejos.robotics.navigation.Waypoint;
 import lejos.robotics.pathfinding.Path;
 import lejos.robotics.pathfinding.ShortestPathFinder;
+import lejos.robotics.subsumption.Arbitrator;
+import lejos.robotics.subsumption.Behavior;
 import lejos.utility.Delay;
 
 public class A5 {
@@ -39,6 +41,10 @@ public class A5 {
 		UltrasonicSensor ussr = new UltrasonicSensor(SensorPort.S1);
 		TheClaw theClaw = new TheClaw(MotorPort.C);
 		Mast mast = new Mast(MotorPort.B);
+		
+		// Subsumption behaviors
+		Behavior checkObstaclesBehavior = new CheckObstacles();
+		Arbitrator arbitrator = new Arbitrator(new Behavior[] {});
 		
 		// Mapping
 		LineMap map = A5.initializeMap();
