@@ -3,6 +3,7 @@ package a5;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Stack;
 
 import javax.xml.stream.XMLStreamException;
@@ -14,7 +15,9 @@ import a4.UltrasonicSensor;
 import lejos.hardware.lcd.LCD;
 import lejos.hardware.port.MotorPort;
 import lejos.hardware.port.SensorPort;
+import lejos.robotics.geometry.Line;
 import lejos.robotics.geometry.Point;
+import lejos.robotics.geometry.Rectangle;
 import lejos.robotics.mapping.LineMap;
 import lejos.robotics.mapping.SVGMapLoader;
 import lejos.robotics.navigation.DestinationUnreachableException;
@@ -85,13 +88,23 @@ public class A5 {
 	}
 	
 	public static LineMap initializeMap() {
-		try {
-			SVGMapLoader loader = new SVGMapLoader(new FileInputStream(new File("src/a5/3x3Maze.svg")));
-			LineMap lineMap = loader.readLineMap();
-			return lineMap.flip(); //svg files upper left is 0,0 whereas LeJos bottom left is 0,0 for (x,y). Thus requiring flipping 
-		} catch (FileNotFoundException | XMLStreamException e) {
-			e.printStackTrace();
-		} 
-		return null;
+		ArrayList<Line> lines = new ArrayList<>();
+		
+		// Horizontals top down
+		lines.add(new Line(20.0f, 500.0f, 500.0f, 500.0f));
+		lines.add(new Line(180.0f, 340.0f, 500.0f, 340.0f));
+		lines.add(new Line(180.0f, 180.0f, 340.0f, 180.0f));
+		lines.add(new Line(20.0f, 20.0f, 180.0f, 20.0f));
+		lines.add(new Line(340.0f, 20.0f, 500.0f, 20.0f));
+		
+		// Verticals left to right
+		lines.add(new Line(20.0f, 20.0f, 20.0f, 500.0f));
+		lines.add(new Line(180.0f, 20.0f, 180.0f, 180.0f));
+		lines.add(new Line(500.0f, 20.0f, 500.0f, 500.0f));
+		Line[] lineArr = new Line[lines.size()];
+
+		lineArr = lines.toArray(lineArr);
+		
+		return new LineMap(lineArr, new Rectangle(0.0f, 0.0f , 520.0f, 520.0f));
 	}
 }
