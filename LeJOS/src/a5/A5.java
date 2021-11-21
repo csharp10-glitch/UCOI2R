@@ -42,17 +42,21 @@ public class A5 {
 		// Sensors
 		ColorSensor colorSensor = new ColorSensor(SensorPort.S4);
 		UltrasonicSensor ussr = new UltrasonicSensor(SensorPort.S1);
-		TheClaw theClaw = new TheClaw(MotorPort.C);
+//		TheClaw theClaw = new TheClaw(MotorPort.C);
 		Mast mast = new Mast(MotorPort.B);
 		
 		// Subsumption behaviors
-		Behavior realignBehavior = new RealignBehavior(pilot, ussr, colorSensor);
-		Arbitrator arbitrator = new Arbitrator(new Behavior[] {realignBehavior});
+//		Behavior realignBehavior = new RealignBehavior(pilot, ussr, colorSensor);
+//		Arbitrator arbitrator = new Arbitrator(new Behavior[] {realignBehavior});
 		
+		
+		System.out.println("Pilot started");
 		// Mapping
 		LineMap map = A5.initializeMap();
 		ShortestPathFinder pathPlanner = new ShortestPathFinder(map);
 		pathPlanner.lengthenLines(bufferSpaceForWall);	
+		System.out.println("Map and Planner initialized");
+		System.out.println(map.getLines().length);
 		
 		//Data structure for future DFS implementation. See https://www.youtube.com/watch?v=iaBEKo5sM7w
 		Stack<Point> stack = new Stack<>();
@@ -60,12 +64,16 @@ public class A5 {
 		stack.add(startPt);
 		Point endPt = new Point(260, 20); // Update as needed
 		
+		System.out.println("Stacks Stacked");
+		
+		
 		float startHeading = 90f; // 0 parallel to x-axis, 90 parallel to y-axis. Update this if maze entrance requires different heading
 		try {
+			System.out.println("Trying");
 			Pose start = new Pose(startPt.x, startPt.y, startHeading);
 			Waypoint end = new Waypoint(endPt.x, endPt.y); 
 			Path path = pathPlanner.findRoute(start, end);
-			
+			System.out.println("Tried");
 			// TODO Need more work below
 			int y = 3;
 			LCD.drawString("Path Planned:", 0, y++);
@@ -78,7 +86,8 @@ public class A5 {
 				// nav.clearPath();
 				// break;
 				
-				LCD.drawString(point.x + " ," + point.y, 1, y++);
+//				LCD.drawString(point.x + " ," + point.y, 1, y++);
+				System.out.println(point.x + " ," + point.y);
 				Delay.msDelay(2000);
 			}
 			
