@@ -46,8 +46,8 @@ public class A5 {
 		Mast mast = new Mast(MotorPort.B);
 		
 		// Subsumption behaviors
-		Behavior checkObstaclesBehavior = new CheckObstacles();
-		Arbitrator arbitrator = new Arbitrator(new Behavior[] {});
+		Behavior realignBehavior = new RealignBehavior(pilot, ussr, colorSensor);
+		Arbitrator arbitrator = new Arbitrator(new Behavior[] {realignBehavior});
 		
 		// Mapping
 		LineMap map = A5.initializeMap();
@@ -58,7 +58,7 @@ public class A5 {
 		Stack<Point> stack = new Stack<>();
 		Point startPt = new Point(340,420); // Update as needed
 		stack.add(startPt);
-		Point endPt = new Point(260, 0); // Update as needed
+		Point endPt = new Point(260, 20); // Update as needed
 		
 		float startHeading = 90f; // 0 parallel to x-axis, 90 parallel to y-axis. Update this if maze entrance requires different heading
 		try {
