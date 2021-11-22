@@ -40,10 +40,10 @@ public class A5 {
 		Navigator nav = new Navigator(pilot);
 		
 		// Sensors
-		ColorSensor colorSensor = new ColorSensor(SensorPort.S4);
-		UltrasonicSensor ussr = new UltrasonicSensor(SensorPort.S1);
-//		TheClaw theClaw = new TheClaw(MotorPort.C);
-		Mast mast = new Mast(MotorPort.B);
+//		ColorSensor colorSensor = new ColorSensor(SensorPort.S4);
+//		UltrasonicSensor ussr = new UltrasonicSensor(SensorPort.S1);
+////		TheClaw theClaw = new TheClaw(MotorPort.C);
+//		Mast mast = new Mast(MotorPort.B);
 		
 		// Subsumption behaviors
 //		Behavior realignBehavior = new RealignBehavior(pilot, ussr, colorSensor);
@@ -85,6 +85,11 @@ public class A5 {
 				// if objected detected: clear the path, stop, and replan with a new LineMap
 				// nav.clearPath();
 				// break;
+				
+				while(pilot.isMoving()) {
+					Delay.msDelay(10000);
+					System.out.println("waiting");
+				}
 				
 //				LCD.drawString(point.x + " ," + point.y, 1, y++);
 				System.out.println(point.x + " ," + point.y);
