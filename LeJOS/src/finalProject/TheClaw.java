@@ -1,4 +1,4 @@
-package a4;
+package finalProject;
 
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.port.Port;
@@ -47,6 +47,8 @@ public class TheClaw {
 		return currentRotation;
 	}
 	
-	
+	public int getClosedRotation() {
+		return closedRotation;
+	}
 
 }

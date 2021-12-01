@@ -1,4 +1,4 @@
-package a4;
+package finalProject;
 
 import lejos.hardware.port.Port;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
