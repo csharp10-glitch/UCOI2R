@@ -1,11 +1,11 @@
 package a5;
 
-import a4.UltrasonicSensor;
 import lejos.hardware.port.SensorPort;
 import lejos.robotics.subsumption.Behavior;
 import lejos.utility.Delay;
 import lejos.robotics.Color;
-import a4.ColorSensor;
+import finalProject.ColorSensor;
+import finalProject.UltrasonicSensor;
 
 public class RealignBehavior implements Behavior {
 	final int REALIGN_DISTANCE_THRESHOLD = 5; // change this value to adjust the sensitivity of the behavior

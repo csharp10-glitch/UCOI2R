@@ -8,10 +8,10 @@ import java.util.Stack;
 
 import javax.xml.stream.XMLStreamException;
 
-import a4.ColorSensor;
-import a4.Mast;
-import a4.TheClaw;
-import a4.UltrasonicSensor;
+import finalProject.ColorSensor;
+import finalProject.Mast;
+import finalProject.TheClaw;
+import finalProject.UltrasonicSensor;
 import lejos.hardware.lcd.LCD;
 import lejos.hardware.port.MotorPort;
 import lejos.hardware.port.SensorPort;

@@ -6,6 +6,10 @@ import java.util.Map;
 
 import org.opencv.core.Mat;
 
+import finalProject.ColorSensor;
+import finalProject.Mast;
+import finalProject.TheClaw;
+import finalProject.UltrasonicSensor;
 import lejos.hardware.Button;
 import lejos.hardware.Sound;
 import lejos.hardware.port.MotorPort;
@@ -66,7 +70,7 @@ public class Main {
 					|| (colorSensor.getColor() == 1)) {
 				a4Pilot.travel(5);
 				theClaw.grab();
-				if (Math.abs(theClaw.checkRotation() - theClaw.closedRotation) < 5) {
+				if (Math.abs(theClaw.checkRotation() - theClaw.getClosedRotation()) < 5) {
 					captured = true;
 				}
 			}

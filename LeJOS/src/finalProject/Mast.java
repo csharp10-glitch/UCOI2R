@@ -1,6 +1,4 @@
-package a4;
-
-import org.opencv.core.RotatedRect;
+package finalProject;
 
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.port.Port;
