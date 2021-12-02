@@ -42,6 +42,12 @@ public class TheClaw {
 		currentRotation = clawMotor.getLimitAngle();
 	}
 	
+	// TODO @soups check pls
+	public void release() {
+		clawMotor.rotateTo(25);
+		currentRotation = clawMotor.getLimitAngle();
+	}
+	
 	public int checkRotation() {
 		currentRotation = clawMotor.getLimitAngle();
 		return currentRotation;
