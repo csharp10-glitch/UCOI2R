@@ -51,5 +51,19 @@ public class Mast {
 			mastMotor.rotate(5);
 		}
 	}
-
+	
+	//TODO soups check pls
+	public void lookFront() {
+		mastMotor.rotateTo(90);
+	}
+	
+	//TODO soups check pls
+	public void lookLeft() {
+		mastMotor.rotateTo(0);
+	}
+	
+	//TODO soups check pls
+	public void lookRight() {
+		mastMotor.rotateTo(180);
+	}
 }
