@@ -4,8 +4,6 @@ import lejos.hardware.port.Port;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.robotics.SampleProvider;
 
-
-// For the lazy
 public class ColorSensor {
 	EV3ColorSensor sensor;
 	SampleProvider color;
