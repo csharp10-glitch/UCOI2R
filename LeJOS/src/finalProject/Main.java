@@ -21,6 +21,7 @@ public class Main {
 	static final float MAZE_WIDTH = 500; // TODO @soups check size for me
 	static final float NODE_SIZE = MAZE_LENGTH / 100; // 5 nodes x 5 nodes maze
 	static final float MOVE_INC = NODE_SIZE / 2; // TODO check me. move increments in mm, stops midway between two nodes and look for marker to ensure robot is centered
+	static final float MOVE_TOL = 10; // move tolerance mm
 	static final float HEAD_TOL = 15; // heading tolerance degrees
 	static final int BALL_COLOR = Color.BLUE;
 	static final int EXIT_COLOR = Color.RED;
@@ -57,7 +58,7 @@ public class Main {
 		// algorithm explaination:
 		// https://youtu.be/Yzsp6l-neGo
 		// https://youtu.be/GEpEoliVNNY
-		while (!Button.ESCAPE.isDown() && !pilot.isBallCaptured() && !pilot.isOutOfMaze()) {
+		while (!Button.ESCAPE.isDown() || (!pilot.isBallCaptured() && !pilot.isOutOfMaze())) {
 			// Check ball
 			int color = colorSensor.getColor();
 			if ((color == BALL_COLOR) || (color == 7) || (color == 1)) { // TODO @soups why 7 and 1 too?
@@ -99,7 +100,7 @@ public class Main {
 				if (currentNode.isExitNode(MAZE_WIDTH, MAZE_LENGTH) || colorSensor.getColor() == EXIT_COLOR) {
 					if (pilot.isBallCaptured()) {
 						theClaw.release();
-						pilot.setBallCaptured(true); // WOOT WOOT
+						pilot.setBallReleased(true); // WOOT WOOT
 					} else {
 						exitPlan.addAll(nodeStack);
 						nextNode = retrace();
@@ -124,7 +125,10 @@ public class Main {
 	}
 
 	/**
-	 * Create node in front of robot based on its heading
+	 * @param heading
+	 * @param x
+	 * @param y
+	 * @return node front of robot based on its heading
 	 */
 	public static MazeNode makeFrontNode(float heading, float x, float y) {
 		if (inRange(heading, 90, HEAD_TOL)) { // facing forward 90 degs. front node is north
@@ -140,7 +144,11 @@ public class Main {
 	}
 
 	/**
-	 * Create node in left of robot based on its heading
+	 * 
+	 * @param heading
+	 * @param x
+	 * @param y
+	 * @return node left of robot based on its heading
 	 */
 	public static MazeNode makeLeftNode(float heading, float x, float y) {
 		if (inRange(heading, 90, HEAD_TOL)) { // facing forward 90 degs. left node is west
@@ -156,7 +164,11 @@ public class Main {
 	}
 
 	/**
-	 * Create node in right of robot based on its heading
+	 * 
+	 * @param heading
+	 * @param x
+	 * @param y
+	 * @return node right of robot based on its heading
 	 */
 	public static MazeNode makeRightNode(float heading, float x, float y) {
 		if (inRange(heading, 90, HEAD_TOL)) { // facing forward 90 degs. right node is east
@@ -172,7 +184,10 @@ public class Main {
 	}
 
 	/**
-	 * Value is within range of target value while accounting for tolerance
+	 * @param value
+	 * @param target
+	 * @param tolerance
+	 * @return true if value is within range of target while accounting for tolerance
 	 */
 	public static boolean inRange(float value, float target, float tolerance) {
 		return (target - tolerance) <= value && value <= (target + tolerance);
