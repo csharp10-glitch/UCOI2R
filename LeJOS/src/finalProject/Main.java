@@ -2,6 +2,7 @@ package finalProject;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.Iterator;
 
 import lejos.hardware.Button;
 import lejos.hardware.port.MotorPort;
@@ -17,14 +18,19 @@ public class Main {
 	static Deque<MazeNode> exitPlan = new ArrayDeque<>();
 
 	// TODO check dimensions below for me
-	static final float MAZE_LENGTH = 500; // TODO @soups check size for me
-	static final float MAZE_WIDTH = 500; // TODO @soups check size for me
-	static final float NODE_SIZE = MAZE_LENGTH / 100; // 5 nodes x 5 nodes maze
-	static final float MOVE_INC = NODE_SIZE / 2; // TODO check me. move increments in mm, stops midway between two nodes and look for marker to ensure robot is centered
-	static final float MOVE_TOL = 10; // move tolerance mm
-	static final float HEAD_TOL = 15; // heading tolerance degrees
-	static final int BALL_COLOR = Color.BLUE;
-	static final int EXIT_COLOR = Color.RED;
+	public static final float MAZE_LENGTH = 500; // TODO @soups check size for me
+	public static final float MAZE_WIDTH = 500; // TODO @soups check size for me
+	public static final float NODE_SIZE = MAZE_LENGTH / 100; // 5 nodes x 5 nodes maze
+	public static final float MOVE_INC = NODE_SIZE / 2; // TODO check me. move increments in mm, stops midway between two nodes and look for marker to ensure robot is centered
+	public static final float MOVE_TOL = 10; // move tolerance mm
+	public static final float HEAD_TOL = 15; // heading tolerance degrees
+	public static final int BALL_COLOR = Color.BLUE;
+	public static final int EXIT_COLOR = Color.RED;
+	// TODO check my headings
+	public static final float LEFT_HEADING = 0; //degs
+	public static final float FWD_HEADING = 90; //degs
+	public static final float RIGHT_HEADING = 180; //degs
+	public static final float BACK_HEADING = 270; //degs
 	
 	public static void main(String[] args) {
 		Pilot pilot = new Pilot();
@@ -34,13 +40,8 @@ public class Main {
 		UltrasonicSensor ussr = new UltrasonicSensor(SensorPort.S1);
 		ColorSensor colorSensor = new ColorSensor(SensorPort.S4);
 		Mast mast = new Mast(MotorPort.B);
-
-		// center of the left-bottom-most node
-		float x = 0;
-		float y = 0;
-		float heading = 90f; // 0 parallel to x-axis, 90 parallel to y-axis. TODO update as needed
-
-		MazeNode currentNode = new MazeNode(x, y);
+		
+		MazeNode currentNode = new MazeNode(0, 0); 	// center of the left-bottom-most node
 		currentNode.setVisited(true);
 		nodeStack.push(currentNode);
 		MazeNode frontNode = null;
@@ -48,7 +49,7 @@ public class Main {
 		MazeNode rightNode = null;
 
 		OdometryPoseProvider poseProvider = new OdometryPoseProvider(pilot);
-		poseProvider.setPose(new Pose(x, y, heading));
+		poseProvider.setPose(new Pose(currentNode.getX(), currentNode.getY(), pilot.getHeading()));
 		nav.setPoseProvider(poseProvider);
 		// TODO @soups might need to add gyro sensor here for better heading detection
 
@@ -58,7 +59,7 @@ public class Main {
 		// algorithm explaination:
 		// https://youtu.be/Yzsp6l-neGo
 		// https://youtu.be/GEpEoliVNNY
-		while (!Button.ESCAPE.isDown() || (!pilot.isBallCaptured() && !pilot.isOutOfMaze())) {
+		while (!Button.ESCAPE.isDown()) {
 			// Check ball
 			int color = colorSensor.getColor();
 			if ((color == BALL_COLOR) || (color == 7) || (color == 1)) { // TODO @soups why 7 and 1 too?
@@ -66,19 +67,24 @@ public class Main {
 				theClaw.grab();
 				if (Math.abs(theClaw.checkRotation() - theClaw.getClosedRotation()) < 5) {
 					pilot.setBallCaptured(true);
+					
+					if(!exitPlan.isEmpty()) {
+						exit(pilot, theClaw);
+						break;
+					}
 				}
 			}
 
 			// Look for neighbors: front, left right
 			mast.lookFront();
 			if (ussr.distance() > MOVE_INC) {
-				frontNode = makeFrontNode(heading, x, y);
+				frontNode = makeFrontNode(pilot.getHeading(), currentNode.getX(), currentNode.getY());
 				currentNode.addNeighbor(frontNode);
 			}
 
 			mast.lookLeft();
 			if (ussr.distance() > MOVE_INC) {
-				leftNode = makeLeftNode(heading, x, y);
+				leftNode = makeLeftNode(pilot.getHeading(), currentNode.getX(), currentNode.getY());
 				if (leftNode != null) {
 					currentNode.addNeighbor(leftNode);
 				}
@@ -86,7 +92,7 @@ public class Main {
 
 			mast.lookRight();
 			if (ussr.distance() > MOVE_INC) {
-				rightNode = makeRightNode(heading, x, y);
+				rightNode = makeRightNode(pilot.getHeading(), currentNode.getX(), currentNode.getY());
 				if (rightNode != null) {
 					currentNode.addNeighbor(rightNode);
 				}
@@ -94,32 +100,28 @@ public class Main {
 
 			MazeNode nextNode = currentNode.getUnvisitedNeighbor();
 			if (nextNode == null) { // deadend or visited all neighbors already
-				nextNode = retrace();
+				nextNode = retrace(pilot);
 			} else { // not deadend
 				// check exit
 				if (currentNode.isExitNode(MAZE_WIDTH, MAZE_LENGTH) || colorSensor.getColor() == EXIT_COLOR) {
 					if (pilot.isBallCaptured()) {
 						theClaw.release();
-						pilot.setBallReleased(true); // WOOT WOOT
+						break;
 					} else {
 						exitPlan.addAll(nodeStack);
-						nextNode = retrace();
+						nextNode = retrace(pilot);
 					}
 				}
 				
 				nextNode.setCameFrom(currentNode);
 				nodeStack.push(nextNode);
 				moveListener.setNode(nextNode);
-				nav.goTo(nextNode.getX(), nextNode.getY());
+				pilot.goTo(currentNode, nextNode);
 				while(pilot.isMoving()) {
 					Delay.msDelay(1000);
 				}
 				currentNode = nextNode;
 				currentNode.setVisited(true);
-				
-				x = currentNode.getX();
-				y = currentNode.getY();
-				heading = poseProvider.getPose().getHeading();
 			}
 		}
 	}
@@ -131,11 +133,11 @@ public class Main {
 	 * @return node front of robot based on its heading
 	 */
 	public static MazeNode makeFrontNode(float heading, float x, float y) {
-		if (inRange(heading, 90, HEAD_TOL)) { // facing forward 90 degs. front node is north
+		if (inRange(heading, FWD_HEADING, HEAD_TOL)) { // facing forward 90 degs. front node is north
 			return new MazeNode(x, y + NODE_SIZE);
-		} else if (inRange(heading, 0, HEAD_TOL)) { // facing left 0 degs. front node is west
+		} else if (inRange(heading, LEFT_HEADING, HEAD_TOL)) { // facing left 0 degs. front node is west
 			return new MazeNode(x - NODE_SIZE, y);
-		} else if (inRange(heading, 180, HEAD_TOL)) { // facing right. 180 degs. front node is east
+		} else if (inRange(heading, RIGHT_HEADING, HEAD_TOL)) { // facing right. 180 degs. front node is east
 			return new MazeNode(x + NODE_SIZE, y);
 		} else {
 			System.out.println("ERROR: Heading OUT OF RANGE");
@@ -151,11 +153,11 @@ public class Main {
 	 * @return node left of robot based on its heading
 	 */
 	public static MazeNode makeLeftNode(float heading, float x, float y) {
-		if (inRange(heading, 90, HEAD_TOL)) { // facing forward 90 degs. left node is west
+		if (inRange(heading, FWD_HEADING, HEAD_TOL)) { // facing forward 90 degs. left node is west
 			return new MazeNode(x - NODE_SIZE, y);
-		} else if (inRange(heading, 0, HEAD_TOL)) { // facing left 0 degs. left node is south
+		} else if (inRange(heading, LEFT_HEADING, HEAD_TOL)) { // facing left 0 degs. left node is south
 			return new MazeNode(x, y - NODE_SIZE);
-		} else if (inRange(heading, 180, HEAD_TOL)) { // facing right 180 degs. left node is north
+		} else if (inRange(heading, RIGHT_HEADING, HEAD_TOL)) { // facing right 180 degs. left node is north
 			return new MazeNode(x, y + NODE_SIZE);
 		} else {
 			System.out.println("ERROR: Heading OUT OF RANGE");
@@ -171,11 +173,11 @@ public class Main {
 	 * @return node right of robot based on its heading
 	 */
 	public static MazeNode makeRightNode(float heading, float x, float y) {
-		if (inRange(heading, 90, HEAD_TOL)) { // facing forward 90 degs. right node is east
+		if (inRange(heading, FWD_HEADING, HEAD_TOL)) { // facing forward 90 degs. right node is east
 			return new MazeNode(x + NODE_SIZE, y);
-		} else if (inRange(heading, 0, HEAD_TOL)) { // facing left 0 degs. right node is north
+		} else if (inRange(heading, LEFT_HEADING, HEAD_TOL)) { // facing left 0 degs. right node is north
 			return new MazeNode(x, y + NODE_SIZE);
-		} else if (inRange(heading, 180, HEAD_TOL)) { // facing right 180 degs. right node is south
+		} else if (inRange(heading, RIGHT_HEADING, HEAD_TOL)) { // facing right 180 degs. right node is south
 			return new MazeNode(x, y - NODE_SIZE);
 		} else {
 			System.out.println("ERROR: Heading OUT OF RANGE");
@@ -196,7 +198,47 @@ public class Main {
 	/**
 	 * move back to first node in stack that has unvisited neighbor
 	 */
-	public static MazeNode retrace() {
-		return null;
+	public static MazeNode retrace(Pilot pilot) {
+		while(nodeStack.peek().visitedAllNeighbors()) {
+			pilot.goTo(nodeStack.pop(), nodeStack.peek());
+			while(pilot.isMoving()) {
+				Delay.msDelay(1000);
+			}
+		}
+		return nodeStack.peek().getUnvisitedNeighbor();
+	}
+	
+	public static void exit(Pilot pilot, TheClaw theClaw) {
+		if(exitPlan.isEmpty() || nodeStack.isEmpty())
+			return;
+		Iterator<MazeNode> exitIt = exitPlan.descendingIterator();
+		Iterator<MazeNode> nodeIt = nodeStack.descendingIterator();
+		MazeNode common = null;
+		while(exitIt.hasNext()) {
+			MazeNode exitNode = exitIt.next();
+			MazeNode node = nodeIt.next();
+		    if(exitNode.equals(node)) {
+		    	common = exitNode;
+		    	exitPlan.removeLast();
+		    	nodeStack.removeLast();
+		    }
+		}
+		
+		if(common != null) {
+			exitPlan.addLast(common);
+		}
+		while(!exitPlan.isEmpty()) {
+			nodeStack.addLast(exitPlan.removeLast());
+		}
+		
+		while(nodeStack.size() > 1) {
+			MazeNode currentNode = nodeStack.pop();
+			MazeNode nextNode = nodeStack.peek();
+			pilot.goTo(currentNode, nextNode);
+			while(pilot.isMoving()) {
+				Delay.msDelay(1000);
+			}
+		}
+		theClaw.release();
 	}
 }
