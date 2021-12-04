@@ -14,6 +14,7 @@ public class MazeNode {
 	private MazeNode cameFrom = null; // Node previously connected to this
 	private List<Move> moves = new ArrayList<>(); // Moves to get from predecessor to this node
 	private Set<MazeNode> neighbors = new LinkedHashSet<>();
+	private float nodeSize;
 	
 	public MazeNode(float x, float y) {
 		this.x = x;
@@ -23,6 +24,14 @@ public class MazeNode {
 	public MazeNode(float x, float y, MazeNode cameFrom) {
 		this(x,y);
 		this.cameFrom = cameFrom;
+	}
+	
+	public void setNodeSize(float nodeSize) {
+		this.nodeSize = nodeSize;
+	}
+	
+	public float getNodeSize() {
+		return nodeSize;
 	}
 	
 	public float getX() {
@@ -49,8 +58,10 @@ public class MazeNode {
 		return visited;
 	}
 	
-	public boolean isExitNode(float mazeWidth, float mazeHeight) {
-		return x < 0 || x > mazeWidth || y > mazeHeight;
+	
+	public boolean isExitNode(float mazeWidth, float mazeHeight, float nodesize) {
+//		return x < 0 || x > mazeWidth || y > mazeHeight;
+		return ((x>(mazeWidth-nodesize))&&(y>(mazeHeight-nodesize)));
 	}
 		
 	public List<Move> getMoves() {

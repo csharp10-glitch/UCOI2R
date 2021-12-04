@@ -42,7 +42,7 @@ public class Main {
 		ColorSensor colorSensor = new ColorSensor(SensorPort.S4);
 		Mast mast = new Mast(MotorPort.B);
 		
-		MazeNode currentNode = new MazeNode(0, 0); 	// center of the left-bottom-most node
+		MazeNode currentNode = new MazeNode(MOVE_INC, MOVE_INC); 	// center of the left-bottom-most node
 		currentNode.setVisited(true);
 		nodeStack.push(currentNode);
 		MazeNode frontNode = null;
@@ -63,13 +63,19 @@ public class Main {
 		while (!Button.ESCAPE.isDown()) {
 			// Check ball
 			int color = colorSensor.getColor();
-			if ((color == BALL_COLOR) || (color == 7) || (color == 1)) { // TODO @soups why 7 and 1 too?
+			if ((color == BALL_COLOR) || (color == 7) || (color == 1)) { // TODO @soups why 7 and 1 too? 
+				// @Cao, because that's what works. The sensor is designed to 
+				// look for a very precise rgb ratio that identifies a lego brick's
+				// color. This often doesn't fit the typical ratios for a color.
+				// e.g. it's "Lego Brick" Blue, not "hey, I passed kindergarten,
+				// that's blue" Blue.
 				pilot.travel(5);
 				theClaw.grab();
 				if (Math.abs(theClaw.checkRotation() - theClaw.getClosedRotation()) < 5) {
 					pilot.setBallCaptured(true);
 					
 					if(!exitPlan.isEmpty()) {
+						// fast track back to the end
 						exit(pilot, theClaw);
 						break;
 					}
@@ -104,7 +110,7 @@ public class Main {
 				nextNode = retrace(pilot);
 			} else { // not deadend
 				// check exit
-				if (currentNode.isExitNode(MAZE_WIDTH, MAZE_LENGTH) || colorSensor.getColor() == EXIT_COLOR) {
+				if (currentNode.isExitNode(MAZE_WIDTH, MAZE_LENGTH, NODE_SIZE) || colorSensor.getColor() == EXIT_COLOR) {
 					if (pilot.isBallCaptured()) {
 						theClaw.release();
 						break;
